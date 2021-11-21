@@ -1,0 +1,25 @@
+<%- include('header.html') %>
+
+<section class="container">
+	<form method="post">
+		<h3>Log In</h3>
+		<input name="email"
+			type="email"
+			class="form-control"
+			placeholder="Your Email"
+			autofocus
+			required
+			/>
+
+		<input name="password"
+			type="password"
+			class="form-control"
+			placeholder="Your Password"
+			required
+			/>
+		<button class="btn btn-primary">Log In</button>
+		<a href="/register">Create Account</a>
+	</form>
+</section>
+
+<%- include('footer.html') %>

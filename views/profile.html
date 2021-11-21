@@ -1,0 +1,87 @@
+<%- include('header.html') %>
+
+<section class="container">
+	<h3>Profile of <%= member.first_name %> <%= member.last_name %></h3>
+	<section class="row">
+		<section class="col-12 col-md-3 col-lg-4">
+
+			<img src="/photos/<%= member.profile || 'empty-profile.png' %>" 
+				class="profile-photo"
+				onclick="chooseProfilePhoto()" />
+			<form method="post" 
+				enctype="multipart/form-data"
+				action="/change-profile-photo"
+				class="change-photo">
+				<input type="file" 
+					class="form-control-file" 
+					name="photo"
+					onchange="changeProfilePhoto()" />
+			</form>
+		</section>
+		<section class="col-12 col-md-9 col-lg-8">
+			<form method="post" action="/post-status">
+				<textarea name="detail"
+					class="form-control"
+					rows="4"
+					placeholder="Your Status"
+					></textarea>
+				<button class="btn btn-primary">Post</button>
+			</form>
+			<%  for (var i in all) { 
+					var detail = all[i].detail || ""
+					detail = detail.trim()
+			%>
+				<section class="message">
+					<%= detail %>
+				</section>
+				<time>
+					<%= all[i].time %>
+					<a href="/remove/<%= all[i].number %>">Remove</a>
+				</time>
+			<%  } %>
+		</section>
+	</section>
+</section>
+
+<style>
+	form {
+		max-width: 100%;
+	}
+	input[type=file] {
+		width: 10rem;
+		background: #ccc;
+		border: 1px dashed #ccc;
+	}
+	input[type=file]:hover {
+		background: none;
+		border: 1px dashed pink;
+	}
+	.change-photo {
+		display: none;
+	}
+	.profile-photo {
+		transition: opacity 0.25s linear;
+	}
+	.profile-photo:hover {
+		opacity: .8;
+	}
+	.message {
+		white-space: pre-line;
+	}
+	time {
+		font-size: 0.6rem;
+		color: #aaa;
+		display: block;
+	}
+</style>
+<script>
+	function chooseProfilePhoto() {
+		var e = document.querySelector('input[name=photo]')
+		e.click()
+	}
+	function changeProfilePhoto() {
+		document.querySelector('.change-photo').submit()
+	}
+</script>
+
+<%- include('footer.html') %>

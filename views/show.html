@@ -1,0 +1,34 @@
+<%- include('header.html') %>
+
+<section class="container">
+	<h3>Profile of <%= target.first_name %> <%= target.last_name %></h3>
+	<section class="row">
+		<section class="col-12 col-md-3 col-lg-4">
+			<img src="/photos/<%= target.profile %>"
+			class="profile-photo" />
+		</section>
+		<section class="col-12 col-md-9 col-lg-8">
+			<%  for (var i in all) { 
+					var detail = all[i].detail || ""
+					detail = detail.trim()
+			%>
+			<section class="message">
+				<%= detail %>
+			</section>
+			<time><%= all[i].time %></time>
+			<%  } %>
+		</section>
+	</section>
+</section>
+<style>
+	.message {
+		white-space: pre-line;
+	}
+	time {
+		font-size: 0.6rem;
+		color: #aaa;
+		display: block;
+	}
+</style>
+
+<%- include('footer.html') %>

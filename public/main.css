@@ -1,0 +1,52 @@
+:root {
+	--brand-color: dodgerblue;
+	--footer-background: #555;
+}
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 100vh;
+}
+a {
+	text-decoration: none;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: border-color .25s linear,
+				text-shadow .25s linear;
+}
+a:hover {
+	text-shadow: 0 0 .5rem #888;
+	border-color: var(--brand-color);
+}
+img {
+	max-width: 100%;
+}
+form {
+	margin-top: 1rem;
+	max-width: 320px;
+}
+form > * {
+	margin-bottom: .5rem;
+}
+
+footer {
+	width: 100%;
+	color: white;
+	background: var(--footer-background);
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+	margin-top: 2rem;
+}
+footer ul {
+	padding-left: 0;
+	list-style-type: none;
+}
+footer a {
+	color: #ccc;
+	transition: margin .25s linear;
+}
+footer a:hover {
+	color: white;
+	margin-left: .5rem;
+	border: none;
+}
