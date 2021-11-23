@@ -1,4 +1,5 @@
 var fs       = require("fs")
+var path     = require("path")
 var express  = require("express")
 var server   = express()
 server.listen(6446)
@@ -184,12 +185,11 @@ function changeProfilePhoto(request, response) {
 		}
 		if (ext != null) {
 			// TODO: resize to square photo
-			fs.rename(photoFolder + "/" + 
-						request.file.filename,
-						photoFolder + "/" + 
-						name + ext, empty)
+			fs.rename(path.join(photoFolder, request.file.filename),
+						path.join(photoFolder, name + ext), 
+						empty)
 			if (valid[card].profile != photoDefault) {
-				fs.unlink(photoFolder + "/" + valid[card].profile, empty)
+				fs.unlink(path.join(photoFolder, valid[card].profile), empty)
 			}
 			valid[card].profile = name + ext
 			var sql =   " update members set profile = ? " +
@@ -199,8 +199,8 @@ function changeProfilePhoto(request, response) {
 		}
 	}
 	if (request.file != null) {
-		fs.unlink(photoFolder + "/" + 
-					request.file.filename, empty)
+		fs.unlink(path.join(photoFolder, request.file.filename), 
+						empty)
 	}
 	response.redirect("/profile")
 	/*
