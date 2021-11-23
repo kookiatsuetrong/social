@@ -8,7 +8,7 @@ create table start(
 );
 insert into start(name,value) values('contract', '0x00');
 insert into start(name,value) values('minimum',  '0.1');
-insert into start(name,value) values('secret', 'EMPTY');
+insert into start(name,value) values('secret',   'Guest');
 insert into start(name,value) values('photo-folder',  'photos');
 insert into start(name,value) values('photo-limit',   '1000000');
 insert into start(name,value) values('photo-default', 'empty-profile.png');
@@ -60,7 +60,7 @@ insert into posts(detail, time, owner)
 	values('Television is not real life. In real life, people actually have to leave the coffee shop and go to jobs.', now(), 1);
 
 insert into posts(detail, time, owner)
-	values('You don’t have to start from scratch to do something interesting.', now(), 1);
+	values('You don''t have to start from scratch to do something interesting.', now(), 1);
 
 /*
 insert into posts(detail, time, owner)

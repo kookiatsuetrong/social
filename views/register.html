@@ -20,16 +20,50 @@
 			placeholder="Your Email"
 			required
 			/>
-
 		<input name="password"
 			type="password"
 			class="form-control"
 			placeholder="Your Password"
 			required
 			/>
+		<div class="input-group mb-3">
+			<a class="btn btn-outline-secondary"
+				href="javascript:chooseWallet()"
+				>Choose</a>
+			<input type="text" 
+				class="form-control" 
+				placeholder="Wallet Address"
+				name="address" 
+				required />
+		</div>
 		<button class="btn btn-primary">Register</button>
 		<a href="/login">Log In</a>
 	</form>
 </section>
+<script src="/web3.js"></script>
+<script src="/abi.js"></script>
+
+<script>
+var web3 = new Web3(ethereum)
+var contractAddress = "0x4C1DbFA51f193D521C62488A5bf02FD137698EE1"
+var contract = new web3.eth.Contract(contractABI, contractAddress)
+
+async function chooseWallet() {
+	var accounts = await ethereum.request({method:'eth_requestAccounts'})
+	console.log(accounts)
+	var address = accounts[0]
+	var target = document.querySelector("input[name=address]")
+	target.value = accounts[0]
+
+	contract.methods.deposit('1000000000000')
+	.send({ from: accounts[0],
+			value: '1000000000000'},
+		function(error, result) {
+			console.log(error)
+			console.log(result)
+		})
+
+}
+</script>
 
 <%- include('footer.html') %>
