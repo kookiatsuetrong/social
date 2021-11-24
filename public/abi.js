@@ -20,34 +20,9 @@ var contractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "check",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "a",
-				"type": "address"
-			}
-		],
-		"name": "check",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
+		"name": "close",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -67,16 +42,16 @@ var contractABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "a",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "show",
+		"name": "member",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -84,15 +59,9 @@ var contractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "show",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "register",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

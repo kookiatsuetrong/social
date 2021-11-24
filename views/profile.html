@@ -17,6 +17,8 @@
 					name="photo"
 					onchange="changeProfilePhoto()" />
 			</form>
+			<p id="asset">Asset ...</p>
+			<p id="stake">Staking ...</p>
 		</section>
 		<section class="col-12 col-md-9 col-lg-8">
 			<form method="post" action="/post-status">
@@ -61,6 +63,8 @@
 	}
 	.profile-photo {
 		transition: opacity 0.25s linear;
+		margin: 0 auto;
+		display: block;
 	}
 	.profile-photo:hover {
 		opacity: .8;
@@ -73,6 +77,10 @@
 		color: #aaa;
 		display: block;
 	}
+	#asset,
+	#stake {
+		text-align: center;
+	}
 </style>
 <script>
 	function chooseProfilePhoto() {
@@ -81,6 +89,34 @@
 	}
 	function changeProfilePhoto() {
 		document.querySelector('.change-photo').submit()
+	}
+</script>
+
+<script src="abi.js"></script>
+<script>
+	var web3 = new Web3(ethereum)
+	var contractAddress = "0xD19454A65706773E3F5709267A8Cc42f932fCe9a"
+	var contract = new web3.eth.Contract(contractABI, contractAddress)
+	var address = "<%= member.wallet %>"
+
+	if (address == "") {
+			document.querySelector("#asset").innerHTML = "Guest"
+			document.querySelector("#stake").innerHTML = "Guest"
+	} else {
+		web3.eth.getBalance(address)
+		.then(v => {
+			var target = document.querySelector("#asset")
+			var value = +web3.utils.fromWei(v) || 0
+			target.innerHTML = "Asset " + value.toFixed(8) + " Ethers"
+		})
+		contract.methods.balance(address).call({},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+					var target = document.querySelector("#stake")
+					var value = +web3.utils.fromWei(result) || 0
+					target.innerHTML = "Staking " + value.toFixed(8) + " Ethers"
+				})
 	}
 </script>
 

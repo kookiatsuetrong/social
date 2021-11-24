@@ -28,6 +28,9 @@ server.post("/login", readBody, checkPassword)
 server.get (["/signup", "/register"], showRegisterPage)
 server.post(["/signup", "/register"], readBody, registerMember)
 server.get ("/profile", showProfilePage)
+server.get ("/settings", showSettingsPage)
+server.post("/save-settings", readBody, saveSettings)
+server.get ("/asset", showAssetPage)
 server.get ("/logout", logout)
 server.post("/change-profile-photo", 
 				upload.single("photo"), changeProfilePhoto)
@@ -81,6 +84,38 @@ function showProfilePage(request, response) {
 		pool.query(sql, [valid[card].number], function(e,all) {
 			model.all = all
 			response.render("profile.html", model)
+		})
+	} else {
+		response.redirect("/login?message=Please Login")
+	}
+}
+
+function showSettingsPage(request, response) {
+	var card = request.cookies.card || ""
+	if (valid[card]) {
+		var model = { member: valid[card] }
+		response.render("settings.html", model)
+	} else {
+		response.redirect("/login?message=Please Login")
+	}
+}
+
+function saveSettings(request, response) {
+	var card = request.cookies.card || ""
+	if (valid[card]) {
+		var first = request.body["first-name"] || ""
+		var last  = request.body["last-name"]  || ""
+		var alias = request.body.alias         || ""
+		var data  = [first, last, alias, valid[card].number]
+		var sql   = " update members set first_name=?,    " +
+					" last_name=?, alias=? where number=? "
+		pool.query(sql, data, function(error, result) {
+			var m = valid[card]
+			m.first_name = first
+			m.last_name = last
+			m.alias = alias
+			valid[card] = m
+			response.redirect("/settings")
 		})
 	} else {
 		response.redirect("/login?message=Please Login")
@@ -144,17 +179,24 @@ function registerMember(request, response) {
 		return
 	}
 	var sql  =  " insert into members(email, password, " +
-				"               first_name, last_name) " +
-				" values(?, sha2(?, 512), ?, ?)        "
+				"       first_name, last_name, wallet) " +
+				" values(?, sha2(?, 512), ?, ?, ?)     "
 	var email    = request.body.email         || ""
 	var password = request.body.password      || ""
 	var first    = request.body["first-name"] || ""
 	var last     = request.body["last-name"]  || ""
-	if (email == "" || password == "" || first == "" || last == "") {
+	var address  = request.body.address       || ""
+	var asset    = +request.body.asset        || -1
+
+	var data = [ email, password, first, last, address ]
+	console.log(sql)
+	console.log(data)
+
+	if (email == "" || password == "" || first == "" || 
+		last  == "" || address  == "" /* || asset < 0 */) {
 		response.redirect("/register?message=Invalid")
 		return
 	}
-	var data = [ email, password, first, last ]
 	pool.query(sql, data, function(error, result) {
 		if (error == null) {
 			response.redirect("/login")
@@ -184,12 +226,11 @@ function changeProfilePhoto(request, response) {
 		}
 		if (ext != null) {
 			// TODO: resize to square photo
-			fs.rename(photoFolder + "/" + 
-						request.file.filename,
-						photoFolder + "/" + 
-						name + ext, empty)
+			fs.rename(path.join(photoFolder, request.file.filename),
+						path.join(photoFolder, name + ext), 
+						empty)
 			if (valid[card].profile != photoDefault) {
-				fs.unlink(photoFolder + "/" + valid[card].profile, empty)
+				fs.unlink(path.join(photoFolder, valid[card].profile), empty)
 			}
 			valid[card].profile = name + ext
 			var sql =   " update members set profile = ? " +
@@ -199,8 +240,8 @@ function changeProfilePhoto(request, response) {
 		}
 	}
 	if (request.file != null) {
-		fs.unlink(photoFolder + "/" + 
-					request.file.filename, empty)
+		fs.unlink(path.join(photoFolder, request.file.filename), 
+						empty)
 	}
 	response.redirect("/profile")
 	/*
@@ -268,6 +309,14 @@ function removeStatus(request, response) {
 	pool.query(sql, data, function(error, result) {
 		response.redirect("/profile")
 	})
+}
+
+function showAssetPage(request, response) {
+	if (valid[request.card] == null) {
+		response.redirect("/login")
+	} else {
+		response.render("asset.html", {member: valid[request.card]})
+	}
 }
 
 

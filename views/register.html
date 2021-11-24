@@ -3,6 +3,18 @@
 <section class="container">
 	<form method="post">
 		<h3>Register</h3>
+		<div class="input-group mb-3">
+			<a class="btn btn-primary"
+				href="javascript:chooseWallet()"
+				>Choose</a>
+			<input type="text" 
+				class="form-control" 
+				placeholder="Wallet Address"
+				name="address" 
+				required
+				readonly
+				onchange="check()" />
+		</div>
 		<input name="first-name"
 			class="form-control"
 			placeholder="Your First Name"
@@ -26,43 +38,66 @@
 			placeholder="Your Password"
 			required
 			/>
-		<div class="input-group mb-3">
-			<a class="btn btn-outline-secondary"
-				href="javascript:chooseWallet()"
-				>Choose</a>
-			<input type="text" 
-				class="form-control" 
-				placeholder="Wallet Address"
-				name="address" 
-				required />
-		</div>
 		<button class="btn btn-primary">Register</button>
 		<a href="/login">Log In</a>
 	</form>
 </section>
-<script src="/web3.js"></script>
+
 <script src="/abi.js"></script>
 
 <script>
+
+disable()
+
 var web3 = new Web3(ethereum)
-var contractAddress = "0x4C1DbFA51f193D521C62488A5bf02FD137698EE1"
+var contractAddress = "0xD19454A65706773E3F5709267A8Cc42f932fCe9a"
 var contract = new web3.eth.Contract(contractABI, contractAddress)
+var accounts = [ ]
 
 async function chooseWallet() {
-	var accounts = await ethereum.request({method:'eth_requestAccounts'})
-	console.log(accounts)
-	var address = accounts[0]
 	var target = document.querySelector("input[name=address]")
+	target.value = ""
+	accounts = await ethereum.request({method:'eth_requestAccounts'})
 	target.value = accounts[0]
 
-	contract.methods.deposit('1000000000000')
-	.send({ from: accounts[0],
-			value: '1000000000000'},
-		function(error, result) {
-			console.log(error)
-			console.log(result)
+	// TODO: Add code to verify accounts[0] is not duplicated
+
+	contract.methods.register().send({from:accounts[0]},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+					if (error == null) {
+						enable()
+					}
+				})
+
+}
+
+function check() {
+	var w = document.querySelector("input[name=address]")
+	web3.eth.getBalance(w.value)
+		.then(v => {
+			console.log(v)
+			var target = document.querySelector("#asset")
+			var value = +web3.utils.fromWei(v) || 0
+			var form = document.querySelector("form")
+			form.innerHTML += "<input type='hidden' name='asset' value='" + value + "' />"
 		})
 
+}
+function disable() {
+	document.querySelector("input[name=email]").disabled = true
+	document.querySelector("input[name=first-name]").disabled = true
+	document.querySelector("input[name=last-name]").disabled = true
+	document.querySelector("input[name=password]").disabled = true
+	document.querySelector("form>button").disabled = true
+}
+function enable() {
+	document.querySelector("input[name=email]").disabled = false
+	document.querySelector("input[name=first-name]").disabled = false
+	document.querySelector("input[name=last-name]").disabled = false
+	document.querySelector("input[name=password]").disabled = false
+	document.querySelector("form>button").disabled = false
 }
 </script>
 
