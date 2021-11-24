@@ -1,4 +1,5 @@
 var fs       = require("fs")
+var path     = require("path")
 var express  = require("express")
 var server   = express()
 server.listen(6446)
@@ -81,7 +82,7 @@ function showProfilePage(request, response) {
 	var card = request.cookies.card || ""
 	if (valid[card]) {
 		var model = { member: valid[card] }
-		var sql  = "select * from posts where owner=?"
+		var sql  = "select * from posts where owner=? order by time desc"
 		pool.query(sql, [valid[card].number], function(e,all) {
 			model.all = all
 			response.render("profile.html", model)
@@ -289,7 +290,7 @@ function displayMember(request, response, next) {
 			model.target = result[0]
 			model.member = request.model.member
 
-			var sql  = "select * from posts where owner=?"
+			var sql  = "select * from posts where owner=? order by time desc"
 			pool.query(sql, [model.target.number], function(e,all) {
 				model.all = all
 				response.render("show.html", model)

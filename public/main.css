@@ -1,6 +1,6 @@
 :root {
-	--brand-color: dodgerblue;
-	--footer-background: #555;
+	--brand-color: #789;
+	--footer-background: #444;
 }
 body {
 	display: flex;
@@ -9,12 +9,14 @@ body {
 	min-height: 100vh;
 }
 a {
+	color: var(--brand-color);
 	text-decoration: none;
 	border-bottom: 2px solid rgba(0,0,0,0);
 	transition: border-color .25s linear,
 				text-shadow .25s linear;
 }
 a:hover {
+	color: var(--brand-color);
 	text-shadow: 0 0 .5rem #888;
 	border-color: var(--brand-color);
 }
@@ -49,4 +51,11 @@ footer a:hover {
 	color: white;
 	margin-left: .5rem;
 	border: none;
+}
+.btn-primary {
+	border-color: var(--brand-color);
+	background: var(--brand-color);
+}
+.btn-primary:hover {
+	background: var(--footer-background);
 }

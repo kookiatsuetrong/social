@@ -1,11 +1,11 @@
 <%- include('header.html') %>
 
 <section class="container">
-	<h3>Profile of <%= target.first_name %> <%= target.last_name %></h3>
 	<section class="row">
 		<section class="col-12 col-md-3 col-lg-4">
 			<img src="/photos/<%= target.profile %>"
-			class="profile-photo" />
+				class="profile-photo" />
+			<h4 class="title"><%= target.first_name %> <%= target.last_name %></h4>
 			<p id="asset">Asset ...</p>
 			<p id="stake">Staking ...</p>
 		</section>
@@ -27,6 +27,9 @@
 		margin: 0 auto;
 		display: block;
 	}
+	.title {
+		text-align: center;
+	}
 	.message {
 		white-space: pre-line;
 	}
@@ -37,6 +40,7 @@
 	}
 	#asset,
 	#stake {
+		margin-bottom: 0;
 		text-align: center;
 	}
 </style>
@@ -46,7 +50,7 @@
 	var web3 = new Web3(ethereum)
 	var contractAddress = "0xD19454A65706773E3F5709267A8Cc42f932fCe9a"
 	var contract = new web3.eth.Contract(contractABI, contractAddress)
-	var address = "<%= member.wallet %>"
+	var address = "<%= target.wallet %>"
 
 	if (address == "") {
 			document.querySelector("#asset").innerHTML = "Guest"
@@ -56,7 +60,7 @@
 		.then(v => {
 			var target = document.querySelector("#asset")
 			var value = +web3.utils.fromWei(v) || 0
-			target.innerHTML = "Asset " + value.toFixed(8) + " Ethers"
+			target.innerHTML = "Asset " + value.toFixed(4)
 		})
 		contract.methods.balance(address).call({},
 				function(error, result) {
@@ -64,7 +68,7 @@
 					console.log(result)
 					var target = document.querySelector("#stake")
 					var value = +web3.utils.fromWei(result) || 0
-					target.innerHTML = "Staking " + value.toFixed(8) + " Ethers"
+					target.innerHTML = "Staking " + value.toFixed(4)
 				})
 	}
 </script>

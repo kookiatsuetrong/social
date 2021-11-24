@@ -1,13 +1,27 @@
 <%- include('header.html') %>
 
+<section class="banner">
+	<section class="container">
+		<h3>Social</h3>
+	</section>
+</section>
+<style>
+	.banner {
+		padding-top: .15rem;
+		color: white;
+		height: 2.5rem;
+		background: var(--brand-color);
+	}
+</style>
+
 <section class="container">
-	<h3>Profile of <%= member.first_name %> <%= member.last_name %></h3>
 	<section class="row">
 		<section class="col-12 col-md-3 col-lg-4">
 
 			<img src="/photos/<%= member.profile || 'empty-profile.png' %>" 
 				class="profile-photo"
 				onclick="chooseProfilePhoto()" />
+			<h4 class="title"><%= member.first_name %> <%= member.last_name %></h4>
 			<form method="post" 
 				enctype="multipart/form-data"
 				action="/change-profile-photo"
@@ -46,6 +60,9 @@
 </section>
 
 <style>
+	.title {
+		text-align: center;
+	}
 	form {
 		max-width: 100%;
 	}
@@ -79,6 +96,7 @@
 	}
 	#asset,
 	#stake {
+		margin-bottom: 0;
 		text-align: center;
 	}
 </style>
@@ -107,7 +125,7 @@
 		.then(v => {
 			var target = document.querySelector("#asset")
 			var value = +web3.utils.fromWei(v) || 0
-			target.innerHTML = "Asset " + value.toFixed(8) + " Ethers"
+			target.innerHTML = "Asset " + value.toFixed(4)
 		})
 		contract.methods.balance(address).call({},
 				function(error, result) {
@@ -115,7 +133,7 @@
 					console.log(result)
 					var target = document.querySelector("#stake")
 					var value = +web3.utils.fromWei(result) || 0
-					target.innerHTML = "Staking " + value.toFixed(8) + " Ethers"
+					target.innerHTML = "Staking " + value.toFixed(4)
 				})
 	}
 </script>
