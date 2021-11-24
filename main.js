@@ -32,6 +32,7 @@ server.get ("/settings", showSettingsPage)
 server.post("/save-settings", readBody, saveSettings)
 server.get ("/asset", showAssetPage)
 server.get ("/logout", logout)
+server.get ("/close", close)
 server.post("/change-profile-photo", 
 				upload.single("photo"), changeProfilePhoto)
 server.use ("/:alias", displayMember)
@@ -128,6 +129,21 @@ function logout(request, response) {
 		delete valid[card]
 	}
 	response.render("logout.html")
+}
+
+function close(request, response) {
+	var card = request.cookies.card || ""
+	if (valid[card]) {
+		var data = [valid[card].number]
+		delete valid[card]
+		pool.query("delete from posts where owner=?", data, function(e,r) {
+			pool.query("delete from members where number=?", data, function(e,r) {
+				response.render("close.html")
+			})
+		})
+	} else {
+		response.redirect("/login")
+	}
 }
 
 function checkPassword(request, response) {

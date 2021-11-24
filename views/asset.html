@@ -25,7 +25,7 @@
 
 	<br/><br/>
 	<h6>Danger Zone</h6>
-	<button class="btn btn-danger">Close Account</button>
+	<button onclick="closeAccount()" class="btn btn-danger">Close Account</button>
 
 </section>
 <style>
@@ -59,7 +59,6 @@
 				})
 	}
 
-
 	function deposit() {
 		var value = document.querySelector('[name=deposit-value]').value
 		var cash = web3.utils.toWei(value)
@@ -78,6 +77,17 @@
 			function(error, result) {
 				console.log(error)
 				console.log(result)
+			})
+	}
+
+	function closeAccount() {
+		contract.methods.close().send({from:address},
+			function(error, result) {
+				console.log(error)
+				console.log(result)
+				if (error == null) {
+					location.href="/close"
+				}
 			})
 	}
 </script>
