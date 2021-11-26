@@ -39,6 +39,13 @@ server.post("/change-profile-photo",
 server.use ("/:alias", displayMember)
 server.post("/post-status", readBody, postStatus)
 server.get ("/remove/:number", removeStatus)
+
+server.post  ("/api/login",  readBody, allow, apiCheckPassword)
+server.get   ("/api/list",   allow, apiListPost)
+server.post  ("/api/add",    readBody, allow, apiAddStatus)
+server.delete("/api/remove/:number", allow, apiRemoveStatus)
+server.get   ("/api/logout", allow, apiLogOut)
+
 server.use (express.static("public"))
 server.use ("/" + photoFolder, express.static(photoFolder))
 server.use (showError)
@@ -47,6 +54,7 @@ function createModel(request, response, next) {
 	request.card = request.cookies.card || ""
 	request.model = { }
 	if (valid[request.card]) {
+		request.member = valid[request.card]
 		request.model.member = valid[request.card]
 	}
 	next()
@@ -206,8 +214,6 @@ function registerMember(request, response) {
 	var asset    = +request.body.asset        || -1
 
 	var data = [ email, password, first, last, address ]
-	console.log(sql)
-	console.log(data)
 
 	if (email == "" || password == "" || first == "" || 
 		last  == "" || address  == "" /* || asset < 0 */) {
@@ -336,7 +342,75 @@ function showAssetPage(request, response) {
 	}
 }
 
+function allow(request, response, next) {
+	response.set('Access-Control-Allow-Origin', '*')
+	next()
+}
 
+function apiCheckPassword(request, response) {
+	var email = request.body.email       || ""
+	var password = request.body.password || ""
+	if (email == "" || password == "") {
+		response.send({member: null})
+		return
+	}
+	var data = [email, password]
+	var sql =   " select * from members where email = ? " +
+				" and password = sha2(?, 512)           "
+	pool.query(sql, data, function(error, result) {
+		if (result.length == 1) {
+			var model = { }
+			model.member = result[0]
+			delete model.member.password
+			response.send(model)
+		} else {
+			response.send({member: null})
+		}
+	})
+}
+
+function apiListPost(request, response) {
+	if (request.model.member == null) {
+		response.send({result: null})
+		return
+	}
+	var data = [request.model.member.number]
+	var sql  = "select * from posts where owner=?"
+	pool.query(sql, data, function(error, result) {
+		response.send({result: result})
+	})
+}
+
+function apiAddStatus(request, response) {
+	var detail = request.body.detail || ""
+	if (request.member == null || detail == "") {
+		response.send({result: null})
+		return
+	}
+	var sql  =  " insert into posts(detail,time,owner)   " +
+				" select ?, now(), ?                     "
+	var data = [detail, request.member.number]
+	pool.query(sql, data, function(error, result) {
+		response.send({result: "success"})
+	})
+}
+
+function apiRemoveStatus(request, response) {
+	if (request.model.member == null) {
+		response.send({result: null})
+		return
+	}
+	var sql  = "delete from posts where number=? and owner=?"
+	var data = [ request.params.number, request.member.number]
+	pool.query(sql, data, function(error, result) {
+		response.send({result: "success"})
+	})
+}
+
+function apiLogOut(request, response) {
+	delete valid[request.cookies.card]
+	response.send({result:"success"})
+}
 
 
 
