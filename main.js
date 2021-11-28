@@ -40,6 +40,7 @@ server.use ("/:alias", displayMember)
 server.post("/post-status", readBody, postStatus)
 server.get ("/remove/:number", removeStatus)
 
+server.get   ("/api/status", (r,s) => s.send({status:'OK'}))
 server.post  ("/api/login",  readBody, allow, apiCheckPassword)
 server.get   ("/api/list",   allow, apiListPost)
 server.post  ("/api/add",    readBody, allow, apiAddStatus)
@@ -359,6 +360,10 @@ function apiCheckPassword(request, response) {
 				" and password = sha2(?, 512)           "
 	pool.query(sql, data, function(error, result) {
 		if (result.length == 1) {
+			var token = randomCard()
+			valid[token] = result[0]
+			response.header("Set-Cookie", 
+							"card=" + token + "; HttpOnly;")
 			var model = { }
 			model.member = result[0]
 			delete model.member.password
