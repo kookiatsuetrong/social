@@ -16,3 +16,4 @@ sudo mysql < schema.sql
 npm install express ejs mysql cookie-parser multer
 node main.js
 ```
+![](app.png)
