@@ -1,13 +1,27 @@
 <%- include('header.html') %>
 
+<section class="banner">
+	<section class="container">
+		<h3>Social</h3>
+	</section>
+</section>
+<style>
+	.banner {
+		padding-top: .15rem;
+		color: white;
+		height: 2.5rem;
+		background: var(--brand-color);
+	}
+</style>
+
 <section class="container">
-	<h3>Profile of <%= member.first_name %> <%= member.last_name %></h3>
 	<section class="row">
 		<section class="col-12 col-md-3 col-lg-4">
 
 			<img src="/photos/<%= member.profile || 'empty-profile.png' %>" 
 				class="profile-photo"
 				onclick="chooseProfilePhoto()" />
+			<h4 class="title"><%= member.first_name %> <%= member.last_name %></h4>
 			<form method="post" 
 				enctype="multipart/form-data"
 				action="/change-profile-photo"
@@ -17,6 +31,8 @@
 					name="photo"
 					onchange="changeProfilePhoto()" />
 			</form>
+			<p id="asset">Asset ...</p>
+			<p id="stake">Staking ...</p>
 		</section>
 		<section class="col-12 col-md-9 col-lg-8">
 			<form method="post" action="/post-status">
@@ -44,6 +60,9 @@
 </section>
 
 <style>
+	.title {
+		text-align: center;
+	}
 	form {
 		max-width: 100%;
 	}
@@ -61,6 +80,8 @@
 	}
 	.profile-photo {
 		transition: opacity 0.25s linear;
+		margin: 0 auto;
+		display: block;
 	}
 	.profile-photo:hover {
 		opacity: .8;
@@ -73,6 +94,11 @@
 		color: #aaa;
 		display: block;
 	}
+	#asset,
+	#stake {
+		margin-bottom: 0;
+		text-align: center;
+	}
 </style>
 <script>
 	function chooseProfilePhoto() {
@@ -81,6 +107,34 @@
 	}
 	function changeProfilePhoto() {
 		document.querySelector('.change-photo').submit()
+	}
+</script>
+
+<script src="abi.js"></script>
+<script>
+	var web3 = new Web3(ethereum)
+	var contractAddress = "0xD19454A65706773E3F5709267A8Cc42f932fCe9a"
+	var contract = new web3.eth.Contract(contractABI, contractAddress)
+	var address = "<%= member.wallet %>"
+
+	if (address == "") {
+			document.querySelector("#asset").innerHTML = "Guest"
+			document.querySelector("#stake").innerHTML = "Guest"
+	} else {
+		web3.eth.getBalance(address)
+		.then(v => {
+			var target = document.querySelector("#asset")
+			var value = +web3.utils.fromWei(v) || 0
+			target.innerHTML = "Asset " + value.toFixed(4)
+		})
+		contract.methods.balance(address).call({},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+					var target = document.querySelector("#stake")
+					var value = +web3.utils.fromWei(result) || 0
+					target.innerHTML = "Staking " + value.toFixed(4)
+				})
 	}
 </script>
 

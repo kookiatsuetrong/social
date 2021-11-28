@@ -1,0 +1,25 @@
+<%- include('header.html') %>
+
+<section class="container">
+	<form method="post" action="/save-settings">
+		<h3>Settings</h3>
+		<input name="first-name" 
+			value="<%= member.first_name %>"
+			class="form-control" 
+			placeholder="Your First Name" />
+
+		<input name="last-name" 
+			value="<%= member.last_name %>"
+			class="form-control" 
+			placeholder="Your Family Name" />
+
+		<input name="alias" 
+			value="<%= member.alias %>"
+			class="form-control" 
+			placeholder="Your Alias" />
+
+		<button class="btn btn-primary">Save</button>
+	</form>
+</section>
+
+<%- include('footer.html') %>

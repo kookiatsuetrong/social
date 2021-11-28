@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Demo</title>
+	</head>
+	<body>
+		<button onclick="chooseWallet()">Choose Wallet</button>
+		<button onclick="register()">Register</button>
+		<button onclick="deposit()">Deposit</button>
+		<button onclick="balance()">Balance</button>
+		<button onclick="closeAccount()">Close</button>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+		<script src="abi.js"></script>
+		<script>
+		var web3 = new Web3(ethereum)
+		var contractAddress = "0xD19454A65706773E3F5709267A8Cc42f932fCe9a"
+		var contract = new web3.eth.Contract(contractABI, contractAddress)
+		var accounts = [ ]
+
+		async function chooseWallet() {
+			accounts = await ethereum.request({method:'eth_requestAccounts'})
+			console.log(accounts)
+		}
+		function register() {
+			contract.methods.register().send({from:accounts[0]},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+				})
+		}
+		function balance() {
+			contract.methods.balance(accounts[0]).call({},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+				})
+		}
+		function closeAccount() {
+			contract.methods.close().send({from:accounts[0]},
+				function(error, result) {
+					console.log(error)
+					console.log(result)
+				})
+		}
+		function deposit() {
+			var cash = '10000000000000000'
+			contract.methods.deposit(cash)
+				.send({ from: accounts[0],
+						value: cash},
+			function(error, result) {
+				console.log(error)
+				console.log(result)
+			})
+		}
+		function withdraw() {
+			var cash = '10000000000000000'
+			contract.methods.withdraw(cash)
+				.send({ from: accounts[0]},
+			function(error, result) {
+				console.log(error)
+				console.log(result)
+			})
+		}
+		</script>
+	</body>
+
+	<script type="x">
+	// Get Balance
+	var address = "0x463eee5756231F693D98d7Bf4D9AF6584FECCC9D"
+	web3.eth.getBalance(address)
+	.then(console.log)
+
+	// Get Transaction Detail
+	var tx = "0x47bb9dbee1129a2d0544726a85b866f3d16df8d85b2bdaa0357fa1d9dcf27e54"
+	web3.eth.getTransaction(tx)
+	.then(console.log)
+
+	// Display Ether from Wei
+	web3.utils.fromWei("10000000000000000")
+	</script>
+</html>
